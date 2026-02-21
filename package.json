@@ -14,5 +14,10 @@
   },
   "overrides": {
     "vite": "^8.0.0-beta.13"
+  },
+  "dependencies": {
+    "@photo-sphere-viewer/core": "^5.14.1",
+    "@photo-sphere-viewer/visible-range-plugin": "^5.14.1",
+    "three": "^0.183.1"
   }
 }
