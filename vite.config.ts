@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Gunakan './' agar bisa jalan di sub-folder manapun di GitHub Pages
-  base: './',
+  // Gunakan './' agar path selalu relatif terhadap index.html
+  base: './', 
   build: {
-    outDir: 'dist',
+    // Kita ganti ke folder 'docs' agar bisa dideploy manual via GitHub Pages settings
+    outDir: 'docs',
     assetsDir: 'assets',
   },
 });
