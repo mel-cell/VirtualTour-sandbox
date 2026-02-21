@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Base path harus sesuai dengan nama repository GitHub kamu
+  // Pastikan ini sama persis dengan nama repo di GitHub
   base: '/VirtualTour-sandbox/',
   build: {
     outDir: 'dist',
+    assetsDir: 'assets',
   },
 });
