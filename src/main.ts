@@ -1,36 +1,29 @@
 import './style.css';
 import { Viewer } from '@photo-sphere-viewer/core';
+import { VisibleRangePlugin } from '@photo-sphere-viewer/visible-range-plugin';
+import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
 import '@photo-sphere-viewer/core/index.css';
+import '@photo-sphere-viewer/virtual-tour-plugin/index.css';
 
-// Import image pakai Vite asset management
-import panoramaUrl from '../assets/360image.jpg';
+// Import images
+import img1 from '../assets/360image.jpg';
+import img2 from '../assets/360image2.jpg';
 
 const viewerElement = document.querySelector<HTMLDivElement>('#viewer');
 
 if (viewerElement) {
   const viewer = new Viewer({
     container: viewerElement,
-    panorama: panoramaUrl,
-    loadingTxt: 'Memuat Tour Virtual...',
-    caption: 'Simulasi Panorama HP ke 360',
-    
-    // DETAIL PENTING: Mengatur data panorama yang terpotong (Panorama HP)
-    // Dimensi gambar asli: 14208 x 2320
-    // Kita asumsikan gambar ini adalah 360 derajat horizontal penuh.
-    // Jika 360 derajat penuh, maka lebar bola (fullWidth) = 14208
-    // Maka tinggi bola ideal (fullHeight) harus 1/2 dari lebar = 7104
-    panoData: {
-      fullWidth: 14208,
-      fullHeight: 7104,
-      croppedWidth: 14208,
-      croppedHeight: 2320,
-      croppedX: 0,
-      croppedY: 2392,
-    },
-    // Batasi zoom
-    minFov: 30,
-    maxFov: 70,
-    defaultPitch: 0,
+    loadingTxt: 'Menyiapkan Virtual Tour...',
+    plugins: [
+      [VisibleRangePlugin, {
+        verticalRange: [-Math.PI / 2, Math.PI / 2],
+      }],
+      [VirtualTourPlugin, {
+        positionMode: 'manual',
+        renderMode: '3d',
+      }],
+    ],
     navbar: [
       'autorotate',
       'zoom',
@@ -39,17 +32,47 @@ if (viewerElement) {
     ],
   });
 
-  // Kita kunci kamera supaya tidak bisa lihat area hitam
-  viewer.addEventListener('position-updated', ({ position }) => {
-    const limit = 0.35; // Batas kemiringan leher (Radian)
-    if (position.pitch > limit) {
-      viewer.rotate({ pitch: limit, yaw: position.yaw });
-    } else if (position.pitch < -limit) {
-      viewer.rotate({ pitch: -limit, yaw: position.yaw });
-    }
-  });
+  const virtualTour = viewer.getPlugin(VirtualTourPlugin) as VirtualTourPlugin;
 
-  viewer.addEventListener('ready', () => {
-    console.log('Virtual Tour Siap!');
+  if (virtualTour) {
+    virtualTour.setNodes([
+      {
+        id: 'ruangan-1',
+        panorama: img1,
+        name: 'Ruangan 1 (Panorama HP)',
+        panoData: {
+          fullWidth: 14208,
+          fullHeight: 7104,
+          croppedWidth: 14208,
+          croppedHeight: 2320,
+          croppedX: 0,
+          croppedY: 2392,
+        },
+        links: [
+          { nodeId: 'ruangan-2', position: { yaw: 0, pitch: 0 } },
+        ],
+      },
+      {
+        id: 'ruangan-2',
+        panorama: img2,
+        name: 'Ruangan 2 (Full 360 AI)',
+        links: [
+          { nodeId: 'ruangan-1', position: { yaw: Math.PI, pitch: 0 } },
+        ],
+      },
+    ], 'ruangan-1');
+  }
+
+  virtualTour?.addEventListener('node-changed', ({ node }) => {
+    console.log('Sekarang di:', node.name);
+    
+    const visibleRange = viewer.getPlugin(VisibleRangePlugin) as VisibleRangePlugin;
+    if (visibleRange) {
+      if (node.id === 'ruangan-1') {
+        visibleRange.setVerticalRange([-0.35, 0.35]);
+      } else {
+        visibleRange.setVerticalRange([-Math.PI / 2, Math.PI / 2]);
+      }
+    }
   });
 }
