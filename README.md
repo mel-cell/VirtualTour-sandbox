@@ -15,6 +15,7 @@ A modern web-based virtual tour application designed to simulate immersive envir
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Viewer Engine**: [Photo Sphere Viewer v5](https://photo-sphere-viewer.js.org/)
 - **3D Graphics**: Three.js
+- **360 Photo cam App**
 
 ## 📸 Alur Produksi Aset
 
