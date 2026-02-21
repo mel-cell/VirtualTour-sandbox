@@ -1,11 +1,10 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Gunakan './' agar path selalu relatif terhadap index.html
-  base: './', 
+  // Vercel/Netlify biasanya pakai root path, jadi '/' lebih aman
+  base: '/', 
   build: {
-    // Kita ganti ke folder 'docs' agar bisa dideploy manual via GitHub Pages settings
-    outDir: 'docs',
+    outDir: 'dist',
     assetsDir: 'assets',
   },
 });
